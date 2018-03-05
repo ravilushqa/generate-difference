@@ -1,0 +1,11 @@
+{
+    "name": "ravil/generate-difference",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Ravil",
+            "email": "galaktionov.r@gmail.com"
+        }
+    ],
+    "require": {}
+}
