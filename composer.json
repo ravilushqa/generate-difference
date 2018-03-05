@@ -1,11 +1,38 @@
 {
     "name": "ravilushqa/generate-difference",
+    "bin": [
+        "bin/gendiff"
+    ],
     "type": "project",
+    "license": "MIT",
     "authors": [
         {
-            "name": "Ravil",
-            "email": "galaktionov.r@gmail.com"
+            "name": "Ravil Galaktionov",
+            "email": "galaktionov.r@gmail.com",
+            "homepage": "http://web-artisan.ru",
+            "role": "Developer"
         }
     ],
-    "require": {}
+    "require": {
+        "docopt/docopt": "^1.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "*",
+        "squizlabs/php_codesniffer": "*",
+        "codeclimate/php-test-reporter": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "Ravilushqa\\GenerateDifference\\": "src",
+            "Ravilushqa\\GenerateDifference\\Tests\\": "tests"
+        },
+        "files": [
+            "src/Cli.php"
+        ]
+    },
+    "scripts": {
+        "phpcs": "phpcs",
+        "phpcbf": "phpcbf",
+        "phpunit": "phpunit"
+    }
 }
