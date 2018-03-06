@@ -14,7 +14,10 @@
         }
     ],
     "require": {
-        "docopt/docopt": "^1.0"
+        "php": ">=7.0.0",
+        "docopt/docopt": "^1.0",
+        "tightenco/collect": "^5.5",
+        "funct/funct": "^1.4"
     },
     "require-dev": {
         "phpunit/phpunit": "*",
@@ -23,11 +26,15 @@
     },
     "autoload": {
         "psr-4": {
-            "Ravilushqa\\GenerateDifference\\": "src",
-            "Ravilushqa\\GenerateDifference\\Tests\\": "tests"
+            "Ravilushqa\\Differ\\": "src",
+            "Ravilushqa\\Differ\\Tests\\": "tests"
         },
         "files": [
-            "src/Cli.php"
+            "src/Differ.php",
+            "src/Cli.php",
+            "src/Parser.php",
+            "src/Formater.php",
+            "helpers.php"
         ]
     },
     "scripts": {

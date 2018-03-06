@@ -4,4 +4,4 @@
 
 require_once __DIR__ . '/../src/bootstrap.php';
 
-\GenerateDifference\Cli\main();
+\Ravilushqa\Cli\main();

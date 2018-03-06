@@ -1,10 +1,11 @@
 <?php
 
-namespace GenerateDifference\Cli;
+namespace Ravilushqa\Cli;
 
-function main()
-{
-    $doc = <<<DOC
+use function Ravilushqa\Differ\genDiff;
+
+CONST DOC = <<<DOC
+
 Generate diff
 
 Usage:
@@ -17,5 +18,9 @@ Options:
 
 DOC;
 
-    \Docopt::handle($doc);
+function main()
+{
+    $args = \Docopt::handle(DOC)->args;
+
+    return genDiff($args['--format'], $args['<firstFile>'], $args['<secondFile>']);
 }
