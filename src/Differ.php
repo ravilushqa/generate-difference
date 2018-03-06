@@ -7,41 +7,43 @@ use function Ravilushqa\Helpers\getFileExtension;
 use function Ravilushqa\Parser\format;
 use function Ravilushqa\Parser\parse;
 
-CONST SUPPORTED_FILES = [
+const SUPPORTED_FILES = [
     'json'
 ];
-CONST SUPPORTED_REPORTS = [
+const SUPPORTED_REPORTS = [
     'pretty'
 ];
 
+/**
+ * @param $format
+ * @param $firstFile
+ * @param $secondFile
+ * @return mixed
+ * @throws \Exception
+ */
 function genDiff($format, $firstFile, $secondFile)
 {
     validateInputData($format, $firstFile, $secondFile);
     $diffArray = arraysDiff(parse($firstFile), parse($secondFile));
 
     return format($diffArray, $format);
-
-
 }
 
 /**
  * @param $format
  * @param $firstFile
  * @param $secondFile
+ * @throws \Exception
  */
 function validateInputData($format, $firstFile, $secondFile)
 {
-    try {
-        if (!in_array($format, SUPPORTED_REPORTS)) {
-            throw new \Exception("Not supported report format: $format");
+    if (!in_array($format, SUPPORTED_REPORTS)) {
+        throw new \Exception("Not supported report format: $format\n");
+    }
+    foreach ([$firstFile, $secondFile] as $file) {
+        if (!in_array(getFileExtension($file), SUPPORTED_FILES)) {
+            throw new \Exception("Not supported file format: " . getFileExtension($file).PHP_EOL);
         }
-        foreach ([$firstFile, $secondFile] as $file) {
-            if (!in_array(getFileExtension($file), SUPPORTED_FILES)){
-                throw new \Exception("Not supported file format: " . getFileExtension($file));
-            }
-        }
-    } catch (\Exception $e) {
-        echo $e->getMessage();
     }
 }
 
@@ -58,37 +60,47 @@ function arraysDiff(array $firstFile, array $secondFile)
     $notChanged = collect($firstFile)->intersect(collect($secondFile))->toArray();
 
     return array_reduce($union, function ($acc, $item) use ($added, $removed, $notChanged) {
-        if (array_key_exists($item, $notChanged)) {
-            $acc[] = [
-                'key'  => $item,
-                'type' => 'not changed',
-                'from' => $notChanged[$item],
-                'to' => $notChanged[$item],
-            ];
-        } elseif (array_key_exists($item, $added) && array_key_exists($item, $removed)) {
-            $acc[] = [
-                'key'  => $item,
-                'type' => 'changed',
-                'from' => $removed[$item],
-                'to' => $added[$item],
-            ];
-
-        } elseif (array_key_exists($item, $added) && !array_key_exists($item, $removed)) {
-            $acc[] = [
-                'key'  => $item,
-                'type' => 'added',
-                'from' => "",
-                'to' => $added[$item],
-            ];
-        } else {
-            $acc[] = [
-                'key'  => $item,
-                'type' => 'removed',
-                'from' => "",
-                'to' => $removed[$item],
-            ];
-        }
+        $acc[] = collectDiffData($item, $added, $removed, $notChanged);
         return $acc;
     }, []);
+}
 
+/**
+ * @param $item
+ * @param $added
+ * @param $removed
+ * @param $notChanged
+ * @return array
+ */
+function collectDiffData($item, $added, $removed, $notChanged)
+{
+    if (array_key_exists($item, $notChanged)) {
+        return [
+            'key'  => $item,
+            'type' => 'not changed',
+            'from' => $notChanged[$item],
+            'to'   => $notChanged[$item],
+        ];
+    } elseif (array_key_exists($item, $added) && array_key_exists($item, $removed)) {
+        return [
+            'key'  => $item,
+            'type' => 'changed',
+            'from' => $removed[$item],
+            'to'   => $added[$item],
+        ];
+    } elseif (array_key_exists($item, $added) && !array_key_exists($item, $removed)) {
+        return [
+            'key'  => $item,
+            'type' => 'added',
+            'from' => "",
+            'to'   => var_export($added[$item], true) ,
+        ];
+    } else {
+        return [
+            'key'  => $item,
+            'type' => 'removed',
+            'from' => $removed[$item],
+            'to'   => "",
+        ];
+    }
 }

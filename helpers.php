@@ -10,7 +10,7 @@ namespace Ravilushqa\Helpers;
 function getFileExtension(string $pathToFile)
 {
     if (!file_exists($pathToFile)) {
-        throw new \Exception("file $pathToFile not found");
+        throw new \Exception("file $pathToFile not found\n");
     }
     $info = new \SplFileInfo($pathToFile);
     return $info->getExtension();

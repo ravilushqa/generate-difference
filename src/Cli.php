@@ -4,7 +4,7 @@ namespace Ravilushqa\Cli;
 
 use function Ravilushqa\Differ\genDiff;
 
-CONST DOC = <<<DOC
+const DOC = <<<DOC
 
 Generate diff
 
@@ -18,9 +18,14 @@ Options:
 
 DOC;
 
+/**
+ * @throws \Exception
+ */
 function main()
 {
     $args = \Docopt::handle(DOC)->args;
 
-    return genDiff($args['--format'], $args['<firstFile>'], $args['<secondFile>']);
+    echo genDiff($args['--format'], $args['<firstFile>'], $args['<secondFile>']).PHP_EOL;
+
+    return;
 }
