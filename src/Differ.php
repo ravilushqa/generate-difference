@@ -8,7 +8,8 @@ use function Ravilushqa\Parser\format;
 use function Ravilushqa\Parser\parse;
 
 const SUPPORTED_FILES = [
-    'json'
+    'json',
+    'yaml'
 ];
 const SUPPORTED_REPORTS = [
     'pretty'

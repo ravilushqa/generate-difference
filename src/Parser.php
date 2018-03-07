@@ -3,6 +3,7 @@
 namespace Ravilushqa\Parser;
 
 use function Ravilushqa\Helpers\getFileExtension;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * @param $filePath
@@ -22,6 +23,11 @@ function getArrayByExt()
     return [
         'json' => function ($file) {
             return json_decode($file, true);
+        },
+        'yaml' => function ($file) {
+            $parsed = Yaml::parse($file, Yaml::PARSE_OBJECT_FOR_MAP);
+
+            return (array) $parsed;
         }
     ];
 }
