@@ -30,28 +30,29 @@ function getArrayByFormat()
  */
 function fromDiffArrayToPretty($data)
 {
-    $prettyDiff = array_reduce($data, function ($acc, $item) {
+    $prettyStringsArray = array_reduce($data, function ($acc, $item) {
         switch ($item['type']) {
             case 'not changed':
-                $acc .= "    {$item['key']}: {$item['to']}\n";
+                array_push($acc, "    {$item['key']}: {$item['to']}");
                 break;
             case 'changed':
-                $acc .= "  + {$item['key']}: {$item['to']}\n";
-                $acc .= "  - {$item['key']}: {$item['from']}\n";
+                array_push($acc,"  + {$item['key']}: {$item['to']}");
+                array_push($acc,"  - {$item['key']}: {$item['from']}");
                 break;
             case 'removed':
-                $acc .= "  - {$item['key']}: {$item['from']}\n";
+                array_push($acc,"  - {$item['key']}: {$item['from']}");
                 break;
             case 'added':
-                $acc .= "  + {$item['key']}: {$item['to']}\n";
+                array_push($acc,"  + {$item['key']}: {$item['to']}");
                 break;
         }
 
         return $acc;
-    }, '');
+    }, []);
+
+    $prettyResult = "{\n" . implode(PHP_EOL, $prettyStringsArray) . "\n}";
 
     return <<<PRETTY
-{
-$prettyDiff}
+$prettyResult
 PRETTY;
 }
