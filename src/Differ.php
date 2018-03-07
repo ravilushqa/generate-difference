@@ -93,9 +93,9 @@ function collectDiffData($item, $added, $removed, $notChanged)
             'key'  => $item,
             'type' => 'added',
             'from' => "",
-            'to'   => var_export($added[$item], true) ,
+            'to'   => $added[$item],
         ];
-    } else {
+    } elseif (!array_key_exists($item, $added) && array_key_exists($item, $removed)) {
         return [
             'key'  => $item,
             'type' => 'removed',
