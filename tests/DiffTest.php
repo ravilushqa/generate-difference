@@ -32,12 +32,25 @@ class DiffTest extends TestCase
 
     public function testFlatJsonInPrettyFormat()
     {
-        $expected = include_once __DIR__ . '/fixtures/prettyExpected.php';
+        $expected = file_get_contents(__DIR__ . '/fixtures/prettyExpected.txt');
 
         $firstFilePath = "$this->filesDir/before.json";
         $secondFilePath = "$this->filesDir/after.json";
 
         $result = genDiff($firstFilePath, $secondFilePath);
+
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testFlatYamlInPrettyFormat()
+    {
+        $expected = file_get_contents(__DIR__ . '/fixtures/prettyExpected.txt');
+
+        $firstFilePath = "$this->filesDir/before.yaml";
+        $secondFilePath = "$this->filesDir/after.yaml";
+
+        $result = genDiff($firstFilePath, $secondFilePath);
+
 
         $this->assertEquals($expected, $result);
     }
