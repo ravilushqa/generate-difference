@@ -9,8 +9,7 @@ class DiffTest extends TestCase
 {
     protected $filesDir = __DIR__ . '/utilities';
 
-    /** @test */
-    public function user_should_get_exception_when_he_uses_wrong_format()
+    public function testWrongFormat()
     {
         $format = 'wrong';
         $this->expectExceptionMessage("Not supported report format: $format\n");
@@ -21,8 +20,7 @@ class DiffTest extends TestCase
         genDiff($format, $firstFilePath, $secondFilePath);
     }
 
-    /** @test */
-    public function user_should_get_exception_when_he_uses_wrong_file_path()
+    public function testWrongFilePath()
     {
         $wrongPath = "$this->filesDir/wrong-path/after.json";
         $this->expectExceptionMessage("file $wrongPath not found");
@@ -32,8 +30,7 @@ class DiffTest extends TestCase
         genDiff('pretty', $firstFilePath, $wrongPath);
     }
 
-    /** @test */
-    public function user_may_diff_flat_jsons_and_get_it_in_pretty_format()
+    public function testFlatJsonInPrettyFormat()
     {
         $expected = <<<PRETTY
 {
