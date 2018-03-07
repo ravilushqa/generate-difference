@@ -7,7 +7,7 @@ use function Ravilushqa\Differ\genDiff;
 
 class DiffTest extends TestCase
 {
-    protected $filesDir = __DIR__ . '/utilities';
+    protected $filesDir = __DIR__ . '/fixtures';
 
     public function testWrongFormat()
     {
