@@ -17,7 +17,7 @@ class DiffTest extends TestCase
         $firstFilePath = "$this->filesDir/before.json";
         $secondFilePath = "$this->filesDir/after.json";
 
-        genDiff($format, $firstFilePath, $secondFilePath);
+        genDiff($firstFilePath, $secondFilePath, $format);
     }
 
     public function testWrongFilePath()
@@ -27,7 +27,7 @@ class DiffTest extends TestCase
 
         $firstFilePath = "$this->filesDir/before.json";
 
-        genDiff('pretty', $firstFilePath, $wrongPath);
+        genDiff($firstFilePath, $wrongPath);
     }
 
     public function testFlatJsonInPrettyFormat()
@@ -45,7 +45,7 @@ PRETTY;
         $firstFilePath = "$this->filesDir/before.json";
         $secondFilePath = "$this->filesDir/after.json";
 
-        $result = genDiff('pretty', $firstFilePath, $secondFilePath);
+        $result = genDiff($firstFilePath, $secondFilePath);
 
         $this->assertEquals($expected, $result);
     }

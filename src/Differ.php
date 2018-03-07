@@ -21,7 +21,7 @@ const SUPPORTED_REPORTS = [
  * @return mixed
  * @throws \Exception
  */
-function genDiff($format, $firstFile, $secondFile)
+function genDiff($firstFile, $secondFile, $format = 'pretty')
 {
     validateInputData($format, $firstFile, $secondFile);
     $diffArray = arraysDiff(parse($firstFile), parse($secondFile));
