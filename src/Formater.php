@@ -30,20 +30,20 @@ function getArrayByFormat()
  */
 function fromDiffArrayToPretty($data)
 {
-    $prettyStringsArray = array_reduce($data, function ($acc, $item) {
+    $prettyStringsArray = array_reduce(prepareDataToString($data), function ($acc, $item) {
         switch ($item['type']) {
             case 'not changed':
                 array_push($acc, "    {$item['key']}: {$item['to']}");
                 break;
             case 'changed':
-                array_push($acc,"  + {$item['key']}: {$item['to']}");
-                array_push($acc,"  - {$item['key']}: {$item['from']}");
+                array_push($acc, "  + {$item['key']}: {$item['to']}");
+                array_push($acc, "  - {$item['key']}: {$item['from']}");
                 break;
             case 'removed':
-                array_push($acc,"  - {$item['key']}: {$item['from']}");
+                array_push($acc, "  - {$item['key']}: {$item['from']}");
                 break;
             case 'added':
-                array_push($acc,"  + {$item['key']}: {$item['to']}");
+                array_push($acc, "  + {$item['key']}: {$item['to']}");
                 break;
         }
 
@@ -55,4 +55,14 @@ function fromDiffArrayToPretty($data)
     return <<<PRETTY
 $prettyResult
 PRETTY;
+}
+
+function prepareDataToString($data)
+{
+    return array_map(function ($item) {
+        $item['from'] = is_bool($item['from']) ? var_export($item['from'], true) : $item['from'];
+        $item['to'] = is_bool($item['to']) ? var_export($item['to'], true) : $item['to'];
+
+        return $item;
+    }, $data);
 }
