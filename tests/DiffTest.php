@@ -32,15 +32,7 @@ class DiffTest extends TestCase
 
     public function testFlatJsonInPrettyFormat()
     {
-        $expected = <<<PRETTY
-{
-    host: hexlet.io
-  + timeout: 20
-  - timeout: 50
-  - proxy: 123.234.53.22
-  + verbose: true
-}
-PRETTY;
+        $expected = include_once __DIR__ . '/fixtures/prettyExpected.php';
 
         $firstFilePath = "$this->filesDir/before.json";
         $secondFilePath = "$this->filesDir/after.json";
