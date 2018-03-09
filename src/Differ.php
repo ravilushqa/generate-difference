@@ -25,7 +25,11 @@ const SUPPORTED_REPORTS = [
 function genDiff($firstFile, $secondFile, $format = 'pretty')
 {
     validateInputData($format, $firstFile, $secondFile);
-    $diffArray = arraysDiff(parse($firstFile), parse($secondFile));
+
+    $firstFileData = parse($firstFile);
+    $secondFileData = parse($secondFile);
+
+    $diffArray = arraysDiff($firstFileData, $secondFileData);
 
     return format($diffArray, $format);
 }
@@ -49,59 +53,61 @@ function validateInputData($format, $firstFile, $secondFile)
 }
 
 /**
- * @param array $firstFile
- * @param array $secondFile
+ * @param array $firstFileData
+ * @param array $secondFileData
  * @return mixed
  */
-function arraysDiff(array $firstFile, array $secondFile)
+function arraysDiff(array $firstFileData, array $secondFileData)
 {
-    $union = union(array_keys($firstFile), array_keys($secondFile));
-    $added = collect($secondFile)->diffAssoc(collect($firstFile))->toArray();
-    $removed = collect($firstFile)->diffAssoc(collect($secondFile))->toArray();
-    $notChanged = collect($firstFile)->intersect(collect($secondFile))->toArray();
+    $union = union(array_keys($firstFileData), array_keys($secondFileData));
 
-    return array_reduce($union, function ($acc, $item) use ($added, $removed, $notChanged) {
-        $acc[] = collectDiffData($item, $added, $removed, $notChanged);
+    return array_reduce($union, function ($acc, $item) use ($firstFileData, $secondFileData) {
+        $acc[] = collectDiffData($item, $firstFileData, $secondFileData);
         return $acc;
     }, []);
 }
 
 /**
  * @param $item
- * @param $added
- * @param $removed
- * @param $notChanged
+ * @param $beforeArray
+ * @param $afterArray
  * @return array
  */
-function collectDiffData($item, $added, $removed, $notChanged)
+function collectDiffData($item, $beforeArray, $afterArray)
 {
-    if (array_key_exists($item, $notChanged)) {
-        return [
-            'key'  => $item,
-            'type' => 'not changed',
-            'from' => $notChanged[$item],
-            'to'   => $notChanged[$item],
-        ];
-    } elseif (array_key_exists($item, $added) && array_key_exists($item, $removed)) {
-        return [
-            'key'  => $item,
-            'type' => 'changed',
-            'from' => $removed[$item],
-            'to'   => $added[$item],
-        ];
-    } elseif (array_key_exists($item, $added) && !array_key_exists($item, $removed)) {
-        return [
-            'key'  => $item,
-            'type' => 'added',
-            'from' => "",
-            'to'   => $added[$item],
-        ];
-    } elseif (!array_key_exists($item, $added) && array_key_exists($item, $removed)) {
+    if (array_key_exists($item, $beforeArray) && array_key_exists($item, $afterArray)) {
+        if ($beforeArray[$item] === $afterArray[$item]) {
+            return [
+                'key' => $item,
+                'type' => 'not changed',
+                'from' => $beforeArray[$item],
+                'to' => $beforeArray[$item],
+            ];
+        } else {
+            return [
+                'key' => $item,
+                'type' => 'changed',
+                'from' => $beforeArray[$item],
+                'to' => $afterArray[$item],
+            ];
+        }
+    }
+
+    if (array_key_exists($item, $beforeArray) && !array_key_exists($item, $afterArray)) {
         return [
             'key'  => $item,
             'type' => 'removed',
-            'from' => $removed[$item],
-            'to'   => "",
+            'from' => $beforeArray[$item],
+            'to'   => null,
+        ];
+    }
+
+    if (!array_key_exists($item, $beforeArray) && array_key_exists($item, $afterArray)) {
+        return [
+            'key'  => $item,
+            'type' => 'added',
+            'from' => null,
+            'to'   => $afterArray[$item],
         ];
     }
 }
