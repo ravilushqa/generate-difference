@@ -15,3 +15,21 @@ function getFileExtension(string $pathToFile)
     $info = new \SplFileInfo($pathToFile);
     return $info->getExtension();
 }
+
+/**
+ * @param string $pathToFile
+ * @return bool|string
+ * @throws \Exception
+ */
+function getFileContent(string $pathToFile)
+{
+    if (file_exists($pathToFile) && is_readable($pathToFile)) {
+        $content = file_get_contents($pathToFile);
+    } else {
+        throw new \Exception("file '{$pathToFile}' is undefined");
+    }
+    if ($content === false) {
+        throw new \Exception("file '{$pathToFile}' is undefined");
+    }
+    return $content;
+}

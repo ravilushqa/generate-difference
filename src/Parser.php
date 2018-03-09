@@ -6,13 +6,14 @@ use function Ravilushqa\Helpers\getFileExtension;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * @param $filePath
+ * @param $content
+ * @param $extension
  * @return mixed
  * @throws \Exception
  */
-function parse($filePath)
+function parse($content, $extension)
 {
-    return getArrayByExt()[getFileExtension($filePath)](file_get_contents($filePath));
+    return getArrayByExt()[$extension]($content);
 }
 
 /**
@@ -21,11 +22,11 @@ function parse($filePath)
 function getArrayByExt()
 {
     return [
-        'json' => function ($file) {
-            return json_decode($file, true);
+        'json' => function ($content) {
+            return json_decode($content, true);
         },
-        'yaml' => function ($file) {
-            $parsed = Yaml::parse($file, Yaml::PARSE_OBJECT_FOR_MAP);
+        'yaml' => function ($content) {
+            $parsed = Yaml::parse($content, Yaml::PARSE_OBJECT_FOR_MAP);
 
             return (array) $parsed;
         }

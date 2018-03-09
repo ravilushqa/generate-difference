@@ -3,6 +3,7 @@
 namespace Ravilushqa\Differ;
 
 use function Funct\Collection\union;
+use function Ravilushqa\Helpers\getFileContent;
 use function Ravilushqa\Helpers\getFileExtension;
 use function Ravilushqa\Parser\format;
 use function Ravilushqa\Parser\parse;
@@ -26,8 +27,8 @@ function genDiff($firstFile, $secondFile, $format = 'pretty')
 {
     validateInputData($format, $firstFile, $secondFile);
 
-    $firstFileData = parse($firstFile);
-    $secondFileData = parse($secondFile);
+    $firstFileData = parse(getFileContent($firstFile), getFileExtension($firstFile));
+    $secondFileData = parse(getFileContent($secondFile), getFileExtension($secondFile));
 
     $diffArray = arraysDiff($firstFileData, $secondFileData);
 
