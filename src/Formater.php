@@ -33,17 +33,17 @@ function fromDiffArrayToPretty($data)
     $prettyStringsArray = array_reduce(prepareDataToString($data), function ($acc, $item) {
         switch ($item['type']) {
             case 'not changed':
-                array_push($acc, "    {$item['key']}: {$item['to']}");
+                $acc[] = "    {$item['key']}: {$item['to']}";
                 break;
             case 'changed':
-                array_push($acc, "  + {$item['key']}: {$item['to']}");
-                array_push($acc, "  - {$item['key']}: {$item['from']}");
+                $acc[] = "  + {$item['key']}: {$item['to']}";
+                $acc[] = "  - {$item['key']}: {$item['from']}";
                 break;
             case 'removed':
-                array_push($acc, "  - {$item['key']}: {$item['from']}");
+                $acc[] = "  - {$item['key']}: {$item['from']}";
                 break;
             case 'added':
-                array_push($acc, "  + {$item['key']}: {$item['to']}");
+                $acc[] = "  + {$item['key']}: {$item['to']}";
                 break;
         }
 
