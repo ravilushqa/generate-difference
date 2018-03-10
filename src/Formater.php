@@ -67,9 +67,7 @@ function fromDiffArrayToPretty(array $ast, $level = 0)
 
     $prettyResult = "{\n" . implode(PHP_EOL, $prettyStringsArray) . "\n}";
 
-    return <<<PRETTY
-$prettyResult
-PRETTY;
+    return $prettyResult;
 }
 
 function prepareValue($value)
