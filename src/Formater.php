@@ -3,13 +3,13 @@
 namespace Ravilushqa\Parser;
 
 /**
- * @param array $data
+ * @param array $ast
  * @param $format
  * @return mixed
  */
-function format(array $data, $format)
+function format(array $ast, $format)
 {
-    return getArrayByFormat()[$format]($data);
+    return getArrayByFormat()[$format]($ast);
 }
 
 /**
@@ -18,32 +18,52 @@ function format(array $data, $format)
 function getArrayByFormat()
 {
     return [
-        'pretty' => function (array $data) {
-            return fromDiffArrayToPretty($data);
+        'pretty' => function (array $ast) {
+            return fromDiffArrayToPretty($ast);
         }
     ];
 }
 
 /**
- * @param $data
+ * @param array $ast
+ * @param int $level
  * @return string
  */
-function fromDiffArrayToPretty($data)
+function fromDiffArrayToPretty(array $ast, $level = 0)
 {
-    $prettyStringsArray = array_reduce(prepareDataToString($data), function ($acc, $item) {
+    $prettyStringsArray = array_reduce($ast, function ($acc, $item) use ($level) {
         switch ($item['type']) {
+            case 'node':
+                $acc[] = $item['key'] . ': ' . '{'. PHP_EOL . fromDiffArrayToPretty($item['children'], $level + 1) . PHP_EOL . '}';
+                break;
             case 'not changed':
-                $acc[] = "    {$item['key']}: {$item['to']}";
+                if (is_array($item['to'])) {
+
+                } else {
+                    $acc[] = getPrettyRow($item['key'], $item['to'], ' ', $level);
+                }
                 break;
             case 'changed':
-                $acc[] = "  + {$item['key']}: {$item['to']}";
-                $acc[] = "  - {$item['key']}: {$item['from']}";
+                if (is_array($item['to'])) {
+
+                } else {
+                    $acc[] = getPrettyRow($item['key'], $item['to'], '+', $level);
+                    $acc[] = getPrettyRow($item['key'], $item['from'], '-', $level);
+                }
                 break;
             case 'removed':
-                $acc[] = "  - {$item['key']}: {$item['from']}";
+                if (is_array($item['from'])) {
+
+                } else {
+                    $acc[] = getPrettyRow($item['key'], $item['from'], '-', $level);
+                }
                 break;
             case 'added':
-                $acc[] = "  + {$item['key']}: {$item['to']}";
+                if (is_array($item['to'])) {
+
+                } else {
+                    $acc[] = getPrettyRow($item['key'], $item['to'], '+', $level);
+                }
                 break;
         }
 
@@ -57,12 +77,23 @@ $prettyResult
 PRETTY;
 }
 
-function prepareDataToString($data)
+function prepareValue($value)
 {
-    return array_map(function ($item) {
-        $item['from'] = is_bool($item['from']) ? var_export($item['from'], true) : $item['from'];
-        $item['to'] = is_bool($item['to']) ? var_export($item['to'], true) : $item['to'];
+    return is_bool($value) ? var_export($value, true) : $value;
+}
 
-        return $item;
-    }, $data);
+function getPrettyIndent(int $level) {
+    return str_repeat(' ', $level * 4 + 2);
+}
+
+function getPrettyRow(string $key, $value, string $prefix, int $level)
+{
+    return implode(
+        [
+            getPrettyIndent($level),
+            $prefix,
+            " {$key}: ",
+            prepareValue($value)
+        ]
+    );
 }

@@ -77,20 +77,28 @@ function arraysDiff(array $firstFileData, array $secondFileData)
 function collectDiffData($item, $beforeArray, $afterArray)
 {
     if (array_key_exists($item, $beforeArray) && array_key_exists($item, $afterArray)) {
-        if ($beforeArray[$item] === $afterArray[$item]) {
+        if (is_array($beforeArray[$item]) && is_array($afterArray[$item])) {
             return [
+                'key' => $item,
+                'type' => 'node',
+                'children' => arraysDiff($beforeArray[$item], $afterArray[$item])
+            ];
+        } else {
+            if ($beforeArray[$item] === $afterArray[$item]) {
+                return [
                 'key' => $item,
                 'type' => 'not changed',
                 'from' => $beforeArray[$item],
-                'to' => $beforeArray[$item],
-            ];
-        } else {
-            return [
+                'to' => $afterArray[$item],
+                ];
+            } else {
+                return [
                 'key' => $item,
                 'type' => 'changed',
                 'from' => $beforeArray[$item],
                 'to' => $afterArray[$item],
-            ];
+                ];
+            }
         }
     }
 
