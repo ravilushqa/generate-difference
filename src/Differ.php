@@ -80,7 +80,8 @@ function collectDiffData($item, $beforeArray, $afterArray)
         if (is_array($beforeArray[$item]) && is_array($afterArray[$item])) {
             return [
                 'key' => $item,
-                'type' => 'node',
+                'type' => 'not changed',
+                'treePart' => 'node',
                 'children' => arraysDiff($beforeArray[$item], $afterArray[$item])
             ];
         } else {
@@ -88,6 +89,7 @@ function collectDiffData($item, $beforeArray, $afterArray)
                 return [
                 'key' => $item,
                 'type' => 'not changed',
+                'treePart' => 'leaf',
                 'from' => $beforeArray[$item],
                 'to' => $afterArray[$item],
                 ];
@@ -95,6 +97,7 @@ function collectDiffData($item, $beforeArray, $afterArray)
                 return [
                 'key' => $item,
                 'type' => 'changed',
+                'treePart' => 'leaf',
                 'from' => $beforeArray[$item],
                 'to' => $afterArray[$item],
                 ];
@@ -103,18 +106,36 @@ function collectDiffData($item, $beforeArray, $afterArray)
     }
 
     if (array_key_exists($item, $beforeArray) && !array_key_exists($item, $afterArray)) {
+        if (is_array($beforeArray[$item])) {
+            return [
+                'key'  => $item,
+                'type' => 'removed',
+                'treePart' => 'node',
+                'children' => $beforeArray[$item],
+            ];
+        }
         return [
             'key'  => $item,
             'type' => 'removed',
+            'treePart' => 'leaf',
             'from' => $beforeArray[$item],
             'to'   => null,
         ];
     }
 
     if (!array_key_exists($item, $beforeArray) && array_key_exists($item, $afterArray)) {
+        if (is_array($afterArray[$item])) {
+            return [
+                'key'  => $item,
+                'type' => 'added',
+                'treePart' => 'node',
+                'children' => $afterArray[$item],
+            ];
+        }
         return [
             'key'  => $item,
             'type' => 'added',
+            'treePart' => 'leaf',
             'from' => null,
             'to'   => $afterArray[$item],
         ];

@@ -2,6 +2,11 @@
 
 namespace Ravilushqa\Parser;
 
+const PRETTY_INDENT_COUNTER = 4;
+const PRETTY_INDENT_DEFAULT = 2;
+const PRETTY_PREFIX_NOT_CHANGED = '  ';
+const PRETTY_PREFIX_REMOVED= '- ';
+const PRETTY_PREFIX_ADDED= '+ ';
 /**
  * @param array $ast
  * @param $format
@@ -19,7 +24,7 @@ function getArrayByFormat()
 {
     return [
         'pretty' => function (array $ast) {
-            return fromDiffArrayToPretty($ast);
+            return fromAstToPretty($ast);
         }
     ];
 }
@@ -29,41 +34,63 @@ function getArrayByFormat()
  * @param int $level
  * @return string
  */
-function fromDiffArrayToPretty(array $ast, $level = 0)
+function fromAstToPretty(array $ast, $level = 0)
 {
-    $prettyStringsArray = array_reduce($ast, function ($acc, $item) use ($level) {
-        switch ($item['type']) {
-            case 'node':
-                break;
-            case 'not changed':
-                if (is_array($item['to'])) {
-                } else {
-                    $acc[] = getPrettyRow($item['key'], $item['to'], ' ', $level);
-                }
-                break;
-            case 'changed':
-                if (is_array($item['to'])) {
-                } else {
-                    $acc[] = getPrettyRow($item['key'], $item['to'], '+', $level);
-                    $acc[] = getPrettyRow($item['key'], $item['from'], '-', $level);
-                }
-                break;
-            case 'removed':
-                if (is_array($item['from'])) {
-                } else {
-                    $acc[] = getPrettyRow($item['key'], $item['from'], '-', $level);
-                }
-                break;
-            case 'added':
-                if (is_array($item['to'])) {
-                } else {
-                    $acc[] = getPrettyRow($item['key'], $item['to'], '+', $level);
-                }
-                break;
-        }
+    $iter = function (array $branch, int $level) use (&$iter) {
+        return array_reduce($branch, function ($acc, $item) use ($iter, $level) {
+            switch ($item['type']) {
+                case 'not changed':
+                    if (isNode($item)) {
+                        $acc[] = implode(
+                            [
+                                getPrettyIndent($level),
+                                PRETTY_PREFIX_NOT_CHANGED,
+                                "{$item['key']}: {",
+                                $iter($item['children'], $level + 1),
+                                getPrettyIndent($level),
+                                "  }"
+                            ]
+                        );
+                    } else {
+                        $acc[] = getPrettyRow($item['key'], $item['to'], PRETTY_PREFIX_NOT_CHANGED, $level);
+                    }
+                    break;
+                case 'changed':
+                    if (isNode($item)) {
+                        $acc[] = implode(
+                            [
+                                getPrettyIndent($level),
+                                PRETTY_PREFIX_NOT_CHANGED,
+                                "{$item['key']}: {",
+                                $iter($item['children'], $level + 1),
+                                getPrettyIndent($level),
+                                "  }"
+                            ]
+                        );
+                    } else {
+                        $acc[] = getPrettyRow($item['key'], $item['to'], PRETTY_PREFIX_ADDED, $level);
+                        $acc[] = getPrettyRow($item['key'], $item['from'], PRETTY_PREFIX_REMOVED, $level);
+                    }
+                    break;
+                case 'removed':
+                    if (isNode($item)) {
+                    } else {
+                        $acc[] = getPrettyRow($item['key'], $item['from'], PRETTY_PREFIX_REMOVED, $level);
+                    }
+                    break;
+                case 'added':
+                    if (isNode($item)) {
+                    } else {
+                        $acc[] = getPrettyRow($item['key'], $item['to'], PRETTY_PREFIX_ADDED, $level);
+                    }
+                    break;
+            }
 
-        return $acc;
-    }, []);
+            return $acc;
+        }, []);
+    };
+
+    $prettyStringsArray = $iter($ast, $level);
 
     $prettyResult = "{\n" . implode(PHP_EOL, $prettyStringsArray) . "\n}";
 
@@ -77,7 +104,7 @@ function prepareValue($value)
 
 function getPrettyIndent(int $level)
 {
-    return str_repeat(' ', $level * 4 + 2);
+    return str_repeat(' ', $level * PRETTY_INDENT_COUNTER + PRETTY_INDENT_DEFAULT);
 }
 
 function getPrettyRow(string $key, $value, string $prefix, int $level)
@@ -86,8 +113,13 @@ function getPrettyRow(string $key, $value, string $prefix, int $level)
         [
             getPrettyIndent($level),
             $prefix,
-            " {$key}: ",
+            "{$key}: ",
             prepareValue($value)
         ]
     );
+}
+
+function isNode($item)
+{
+    return $item['treePart'] === 'node' && array_key_exists('children', $item);
 }
