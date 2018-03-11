@@ -30,9 +30,9 @@ function genDiff($firstFile, $secondFile, $format = 'pretty')
     $firstFileData = parse(getFileContent($firstFile), getFileExtension($firstFile));
     $secondFileData = parse(getFileContent($secondFile), getFileExtension($secondFile));
 
-    $diffArray = arraysDiff($firstFileData, $secondFileData);
+    $ast = generateAst($firstFileData, $secondFileData);
 
-    return format($diffArray, $format);
+    return format($ast, $format);
 }
 
 /**
@@ -58,7 +58,7 @@ function validateInputData($format, $firstFile, $secondFile)
  * @param array $secondFileData
  * @return mixed
  */
-function arraysDiff(array $firstFileData, array $secondFileData)
+function generateAst(array $firstFileData, array $secondFileData)
 {
     $union = union(array_keys($firstFileData), array_keys($secondFileData));
 
@@ -81,7 +81,7 @@ function collectDiffData($item, $beforeArray, $afterArray)
             return [
                 'key' => $item,
                 'type' => 'node',
-                'children' => arraysDiff($beforeArray[$item], $afterArray[$item])
+                'children' => generateAst($beforeArray[$item], $afterArray[$item])
             ];
         } else {
             if ($beforeArray[$item] === $afterArray[$item]) {
