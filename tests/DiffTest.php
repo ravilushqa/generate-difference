@@ -14,18 +14,18 @@ class DiffTest extends TestCase
         $format = 'wrong';
         $this->expectExceptionMessage("Not supported report format: {$format}\n");
 
-        $firstFilePath = "{$this->filesDir}/before.json";
-        $secondFilePath = "{$this->filesDir}/after.json";
+        $firstFilePath = "{$this->filesDir}/flatBefore.json";
+        $secondFilePath = "{$this->filesDir}/flatAfter.json";
 
         genDiff($firstFilePath, $secondFilePath, $format);
     }
 
     public function testWrongFilePath()
     {
-        $wrongPath = "{$this->filesDir}/wrong-path/after.json";
+        $wrongPath = "{$this->filesDir}/wrong-path/flatAfter.json";
         $this->expectExceptionMessage("file {$wrongPath} not found");
 
-        $firstFilePath = "{$this->filesDir}/before.json";
+        $firstFilePath = "{$this->filesDir}/flatBefore.json";
 
         genDiff($firstFilePath, $wrongPath);
     }
@@ -34,8 +34,8 @@ class DiffTest extends TestCase
     {
         $expected = file_get_contents(__DIR__ . '/fixtures/prettyExpected.txt');
 
-        $firstFilePath = "{$this->filesDir}/before.json";
-        $secondFilePath = "{$this->filesDir}/after.json";
+        $firstFilePath = "{$this->filesDir}/flatBefore.json";
+        $secondFilePath = "{$this->filesDir}/flatAfter.json";
 
         $result = genDiff($firstFilePath, $secondFilePath);
 
@@ -46,8 +46,8 @@ class DiffTest extends TestCase
     {
         $expected = file_get_contents(__DIR__ . '/fixtures/prettyExpected.txt');
 
-        $firstFilePath = "{$this->filesDir}/before.yaml";
-        $secondFilePath = "{$this->filesDir}/after.yaml";
+        $firstFilePath = "{$this->filesDir}/flatBefore.yaml";
+        $secondFilePath = "{$this->filesDir}/flatAfter.yaml";
 
         $result = genDiff($firstFilePath, $secondFilePath);
 
