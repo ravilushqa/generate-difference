@@ -30,8 +30,16 @@ function getArrayByFormat()
         },
         'pretty' => function (array $ast) {
             return fromAstToPretty($ast);
+        },
+        'json' => function (array $ast) {
+            return fromAstToJson($ast);
         }
     ];
+}
+
+function fromAstToJson(array $ast)
+{
+    return json_encode($ast);
 }
 
 function fromAstToPlain(array $ast)

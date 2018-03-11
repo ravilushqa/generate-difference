@@ -14,7 +14,8 @@ const SUPPORTED_FILES = [
 ];
 const SUPPORTED_REPORTS = [
     'pretty',
-    'plain'
+    'plain',
+    'json'
 ];
 
 /**
