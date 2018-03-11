@@ -47,26 +47,26 @@ function fromAstToPlain(array $ast)
     $iter = function ($ast, $parents) use (&$iter) {
         return array_reduce($ast, function ($acc, $item) use ($iter, $parents) {
             $parents[] = $item['key'];
-            $pathToNode = implode('.', $parents);
+            $pathToItem = implode('.', $parents);
             switch ($item['type']) {
                 case 'node':
                     $acc = array_merge($acc, $iter($item['children'], $parents));
                     break;
                 case 'added':
                     if (is_array($item['to'])) {
-                        $acc[] = "Property '{$pathToNode}' was added with value: 'complex value'";
+                        $acc[] = "Property '{$pathToItem}' was added with value: 'complex value'";
                     } else {
-                        $acc[] = "Property '{$pathToNode}' was added with value: '{$item['to']}'";
+                        $acc[] = "Property '{$pathToItem}' was added with value: '{$item['to']}'";
                     }
                     break;
                 case 'removed':
-                    $acc[] = "Property '{$pathToNode}' was removed";
+                    $acc[] = "Property '{$pathToItem}' was removed";
                     break;
                 case 'changed':
                     if (is_array($item['to'])) {
-                        $acc[] = "Property '{$pathToNode}' was changed. From '{$item['from']}' to 'complex value'";
+                        $acc[] = "Property '{$pathToItem}' was changed. From '{$item['from']}' to 'complex value'";
                     } else {
-                        $acc[] = "Property '{$pathToNode}' was changed. From '{$item['from']}' to '{$item['to']}'";
+                        $acc[] = "Property '{$pathToItem}' was changed. From '{$item['from']}' to '{$item['to']}'";
                     }
 
                     break;
