@@ -13,7 +13,8 @@ const SUPPORTED_FILES = [
     'yaml'
 ];
 const SUPPORTED_REPORTS = [
-    'pretty'
+    'pretty',
+    'plain'
 ];
 
 /**

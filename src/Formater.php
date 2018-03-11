@@ -25,10 +25,49 @@ function format(array $ast, $format)
 function getArrayByFormat()
 {
     return [
+        'plain' => function (array $ast) {
+            return fromAstToPlain($ast);
+        },
         'pretty' => function (array $ast) {
             return fromAstToPretty($ast);
         }
     ];
+}
+
+function fromAstToPlain(array $ast)
+{
+    $iter = function ($ast, $parents) use (&$iter) {
+        return array_reduce($ast, function ($acc, $item) use ($iter, $parents) {
+            $parents[] = $item['key'];
+            $pathToNode = implode('.', $parents);
+            switch ($item['type']) {
+                case 'node':
+                    $acc = array_merge($acc, $iter($item['children'], $parents));
+                    break;
+                case 'added':
+                    if (is_array($item['to'])) {
+                        $acc[] = "Property '{$pathToNode}' was added with value: 'complex value'";
+                    } else {
+                        $acc[] = "Property '{$pathToNode}' was added with value: '{$item['to']}'";
+                    }
+                    break;
+                case 'removed':
+                    $acc[] = "Property '{$pathToNode}' was removed";
+                    break;
+                case 'changed':
+                    if (is_array($item['to'])) {
+                        $acc[] = "Property '{$pathToNode}' was changed. From '{$item['from']}' to 'complex value'";
+                    } else {
+                        $acc[] = "Property '{$pathToNode}' was changed. From '{$item['from']}' to '{$item['to']}'";
+                    }
+
+                    break;
+            }
+            return $acc;
+        }, []);
+    };
+
+    return implode(PHP_EOL, $iter($ast, []));
 }
 
 /**
