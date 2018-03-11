@@ -55,17 +55,17 @@ class DiffTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
-//    public function testNestedJsonInPrettyFormat()
-//    {
-//        $expected = file_get_contents(__DIR__ . '/fixtures/nestedPrettyExpected.txt');
-//
-//        $firstFilePath = "{$this->filesDir}/nestedBefore.json";
-//        $secondFilePath = "{$this->filesDir}/nestedAfter.json";
-//
-//        $result = genDiff($firstFilePath, $secondFilePath);
-//
-//
-//        $this->assertEquals($expected, $result);
-//    }
+    public function testNestedJsonInPrettyFormat()
+    {
+        $expected = file_get_contents(__DIR__ . '/fixtures/nestedPrettyExpected.txt');
+
+        $firstFilePath = "{$this->filesDir}/nestedBefore.json";
+        $secondFilePath = "{$this->filesDir}/nestedAfter.json";
+
+        $result = genDiff($firstFilePath, $secondFilePath);
+
+
+        $this->assertEquals($expected, $result);
+    }
 
 }
