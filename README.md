@@ -85,8 +85,6 @@ Options:
 }
 ```
 
-**result**
-
 ### Plain
 ```plain
 Setting "common.setting2" deleted.
