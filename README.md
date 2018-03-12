@@ -10,12 +10,24 @@ composer global require ravilushqa/generate-difference
 composer require ravilushqa/generate-difference
 
 ## Usage
-1. For CLI
+#### 1. For CLI
 
 ```bash
-$ gendiff --format plain first-config.ini second-config.ini
+$ gendiff --format plain first-config.json second-config.json
 Setting "common.setting2" deleted.
 Setting "common.setting4" added with value "blah blah".
 Setting "group1.baz" changed from "bas" to "bars".
 Section "group2" deleted.
 ```
+#### 2. For project
+```php
+//todo
+```
+## Supported formats
+#### 1. Formats of input files
+* yml
+* json
+#### 2. Formats of report
+* plain
+* pretty
+* json
